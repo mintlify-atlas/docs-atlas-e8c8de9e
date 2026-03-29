@@ -1,0 +1,78 @@
+---
+title: 'Security overview'
+description: 'How SIS-BIBLIO protects your accounts and data with a multi-layer security model.'
+keywords: ['security', 'authentication', 'CSRF', 'SQL injection', 'XSS', 'roles', 'bcrypt', 'session']
+---
+
+SIS-BIBLIO applies multiple independent layers of protection to your account and data. Each layer addresses a different category of threat — so that a weakness in one area does not compromise the whole system.
+
+<AccordionGroup>
+  <Accordion title="Authentication security" icon="lock">
+    Your password is never stored in plain text. SIS-BIBLIO hashes every password with BCrypt (`PASSWORD_BCRYPT`) before saving it to the database, meaning that even a full database leak would not expose readable credentials.
+
+    When you sign in successfully, the system issues a fresh session ID to prevent session fixation attacks — a technique where an attacker tries to hijack a session that was set up before you authenticated.
+
+    To protect against brute-force attempts, accounts are automatically locked for **15 minutes** after **3 consecutive failed login attempts**. You will see a message on the login page when a lockout is in effect.
+
+    <Note>
+      The lockout timer resets automatically after 15 minutes. You do not need to contact an administrator to unlock a temporarily frozen account.
+    </Note>
+  </Accordion>
+
+  <Accordion title="CSRF protection" icon="shield">
+    Every form in SIS-BIBLIO — including login, registration, password recovery, and all edit or delete actions — includes a hidden CSRF token that is validated on the server before any action is processed.
+
+    Cross-Site Request Forgery (CSRF) is an attack where a malicious web page tricks your browser into submitting a request to SIS-BIBLIO without your knowledge. Because each token is unique to your session and checked server-side, forged requests are rejected before they can cause harm.
+  </Accordion>
+
+  <Accordion title="SQL injection prevention" icon="database">
+    All database queries use PDO prepared statements. User-supplied input — such as email addresses, search terms, or form fields — is never concatenated directly into a SQL query.
+
+    This ensures that a malicious value entered into a form field cannot alter, expose, or delete data in the database.
+  </Accordion>
+
+  <Accordion title="XSS prevention" icon="code">
+    Any user-supplied content that is displayed in the browser — such as names, email addresses, or error messages — is sanitized with `htmlspecialchars()` before it is rendered.
+
+    This prevents cross-site scripting (XSS) attacks, where an attacker might otherwise inject executable scripts into a page viewed by another user.
+  </Accordion>
+
+  <Accordion title="Role-based access control" icon="users">
+    SIS-BIBLIO has two roles:
+
+    | Role | Access level |
+    |------|-------------|
+    | **Administrador** | Full access to all modules, including book management, loan management, staff, and reader administration |
+    | **Lector** | Read-only access to the catalogue and their own loan history; admin-only pages are blocked at the server |
+
+    Role restrictions are enforced on the server side — the backend rejects unauthorized requests regardless of what is visible in the browser interface. Readers cannot escalate their own privileges by manipulating the URL.
+
+    Additionally, administrators cannot delete their own account while actively signed in, preventing accidental self-lockout.
+
+    <Warning>
+      All new accounts registered through the public registration form are assigned the **Lector** role automatically. Only an existing administrator can promote an account to **Administrador**.
+    </Warning>
+  </Accordion>
+
+  <Accordion title="Transport security" icon="globe">
+    SIS-BIBLIO includes a `ca.pem` certificate file that enables SSL/TLS-encrypted connections to cloud-hosted MySQL databases such as Aiven. When this certificate is configured, all traffic between the application and the database is encrypted in transit.
+
+    <Tip>
+      If you are running SIS-BIBLIO against a local MySQL instance on the same machine, SSL can be omitted from the database configuration without affecting local security.
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+## Recommended practices
+
+<CardGroup cols={3}>
+  <Card title="Always sign out" icon="right-from-bracket">
+    Use the **Salir** button in the left sidebar when you finish your session. Closing the browser tab alone does not invalidate your server-side session.
+  </Card>
+  <Card title="Change default passwords" icon="key">
+    The seeded test accounts (`admin@ejemplo.com` and `lector@ejemplo.com`) both use the password `1234567`. Change these before deploying to a live environment.
+  </Card>
+  <Card title="Use Gmail App Passwords" icon="envelope">
+    If you configure SMTP for password recovery, generate a dedicated **Gmail App Password** rather than using your main Gmail account password.
+  </Card>
+</CardGroup>

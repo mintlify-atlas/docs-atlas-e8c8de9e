@@ -1,0 +1,82 @@
+---
+title: 'Authentication'
+description: 'How to sign in, register, and manage your session in SIS-BIBLIO.'
+keywords: ['authentication', 'login', 'register', 'roles', 'account', 'session']
+---
+
+## Signing in
+
+Navigate to `login.php` to access the system. Enter your **email address** and **password**, then click **Ingresar**.
+
+<Tip>
+  Click the eye icon (👁) next to the password field to reveal what you have typed before submitting. This helps you catch typos before the form is submitted.
+</Tip>
+
+A **Volver al Inicio** button appears in the top-left corner of the login page. Click it to return to the landing page without signing in.
+
+On a successful login, you are redirected to `modules/dashboard.php`.
+
+---
+
+## Account lockout
+
+After **3 consecutive failed login attempts**, your account is temporarily locked.
+
+<Warning>
+  If you enter the wrong password 3 times in a row, your account is locked for **15 minutes**. You will see the message: *"Demasiados intentos. Cuenta bloqueada por 15 minutos."* Wait 15 minutes and try again — the lock clears automatically. No admin action is required.
+</Warning>
+
+---
+
+## Registering as a reader
+
+New accounts can be created from the public registration page.
+
+<Steps>
+  <Step title="Open the registration page">
+    On the login page, click **Regístrate aquí** at the bottom, or navigate directly to `register.php`.
+  </Step>
+  <Step title="Fill in your details">
+    Enter your **Full Name**, **email address**, and a **password** (minimum 5 characters). The password field also has an eye icon to verify what you are typing.
+  </Step>
+  <Step title="Submit">
+    Click **Registrarse y Entrar**. The system creates your account and immediately signs you in, redirecting you to the dashboard.
+  </Step>
+</Steps>
+
+<Note>
+  All accounts created through the public registration page are assigned the **Reader** role automatically. A reader profile (library card) is also created for you at the same time, linked to your new account.
+</Note>
+
+---
+
+## User roles
+
+SIS-BIBLIO has two roles. Your role determines which modules and actions are available to you.
+
+| | **Administrator (Rol 1)** | **Reader (Rol 2)** |
+|---|---|---|
+| **Book catalog** | View, add, edit, delete | View only |
+| **Loans** | View all loans; add, edit, delete, cancel | View own loans; create and cancel own loans |
+| **Readers** | Full management | Not accessible |
+| **Staff users** | Full management | Not accessible |
+| **Dashboard** | Total books, registered readers, global active loans | Total books, own historical loan count |
+
+<CardGroup cols={2}>
+  <Card title="Administrator" icon="shield">
+    Full CRUD access to books, loans, readers, and staff accounts. Sees global statistics on the dashboard.
+  </Card>
+  <Card title="Reader" icon="book-open">
+    Can view the book catalog and their own loans. Sees only their own loan count on the dashboard.
+  </Card>
+</CardGroup>
+
+---
+
+## Signing out
+
+Click the **Salir** button in the left sidebar to end your session. This destroys your session data on the server.
+
+<Note>
+  Always use the **Salir** button rather than just closing the browser tab. Closing the tab leaves your session active on the server, which is a security risk on shared computers.
+</Note>

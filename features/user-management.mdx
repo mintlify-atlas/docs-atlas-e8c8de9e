@@ -1,0 +1,109 @@
+---
+title: 'User management'
+description: 'How to manage staff accounts and reader profiles in SIS-BIBLIO.'
+keywords: ['users', 'staff', 'readers', 'lectores', 'usuarios', 'accounts', 'roles', 'admin']
+---
+
+Both sections on this page are **administrator-only**. Readers cannot access either module.
+
+<AccordionGroup>
+  <Accordion title="Staff users (modules/usuarios.php)">
+
+    The **Staff del Sistema** module lists all user accounts that have access to SIS-BIBLIO. Each row shows:
+
+    | Column | Description |
+    |--------|-------------|
+    | **ID Empleado** | Unique user identifier |
+    | **Nombre y Apellidos** | Full name |
+    | **Correo Electrónico de Acceso** | Email used to sign in |
+    | **Nivel (Rol)** | Role badge — Administrator (purple) or Reader (blue) |
+
+    ### Adding a staff user
+
+    <Steps>
+      <Step title="Open the form">
+        Click **Ingresar Usuario** at the top of the staff list. This opens `modules/usuarios_form.php`.
+      </Step>
+      <Step title="Enter the user's details">
+        Fill in **Nombre y Apellidos** and the **Dirección de Correo** that the user will log in with.
+      </Step>
+      <Step title="Assign a role">
+        Select a role from the **Asignación de Rol de Seguridad** dropdown. Choose **Administrador** for full system access or **Lector** for standard access.
+      </Step>
+      <Step title="Set a password">
+        Enter a password in the **Contraseña** field. The password is stored as a BCrypt hash — it is never saved in plain text.
+      </Step>
+      <Step title="Save">
+        Click **Generar Accesos**. The new account appears in the staff list.
+      </Step>
+    </Steps>
+
+    ### Editing a staff user
+
+    Click the **pencil (edit) icon** on any row. The form loads with the user's current details pre-filled.
+
+    - To update name, email, or role without changing the password, **leave the password field blank**. The existing password is preserved.
+    - To reset the password, enter a new value in the password field before saving.
+
+    Click **Generar Accesos** to save your changes.
+
+    ### Removing a staff user
+
+    Click the **red trash icon** on any row. A confirmation dialog appears. Click **OK** to permanently delete the account.
+
+    <Warning>
+      You cannot delete your own currently active account. If you attempt to remove the account you are signed in with, the system will block the deletion and display an error message.
+    </Warning>
+
+  </Accordion>
+
+  <Accordion title="Readers (modules/lectores.php)">
+
+    The **Lectores** module lists all reader profiles registered in the system. Each row shows:
+
+    | Column | Description |
+    |--------|-------------|
+    | **ID** | Unique reader identifier |
+    | **Nombre Completo** | Full name |
+    | **Teléfono** | Contact phone number |
+    | **Afiliación** | Membership status: **Activo** (green) or **Inactivo** (red) |
+    | **Cta. Asignada (Usuario)** | Linked login account email, if any |
+
+    <Note>
+      Readers who self-register via the public `register.php` page have their reader profile created automatically at registration time. An administrator can also add reader profiles manually — for example, for patrons who do not need a login account.
+    </Note>
+
+    ### Adding a reader manually
+
+    <Steps>
+      <Step title="Open the form">
+        Click **Añadir Lector** at the top of the reader list. This opens `modules/lectores_form.php`.
+      </Step>
+      <Step title="Enter the reader's details">
+        Fill in **Nombre Completo** and **Teléfono / Contacto**.
+      </Step>
+      <Step title="Set membership status">
+        Select **Afiliación Activa** or **Suspendido / Inactivo** from the status dropdown.
+      </Step>
+      <Step title="Link to a login account (optional)">
+        Optionally select an existing Reader-role account from the **Vincular a Cuenta de Acceso** dropdown. This allows that user to sign in and view their own loans on the dashboard. Leave this blank if the reader does not need a login.
+      </Step>
+      <Step title="Save">
+        Click **Guardar Ficha** to create the reader profile.
+      </Step>
+    </Steps>
+
+    ### Editing a reader
+
+    Click the **pencil (edit) icon** on any row. Update the fields as needed and click **Guardar Ficha** to save.
+
+    ### Removing a reader
+
+    Click the **red trash icon** on any row. A confirmation dialog appears warning you about the cascade effect.
+
+    <Warning>
+      Deleting a reader **permanently removes all of their loan records** from the database due to a `CASCADE` constraint. This cannot be undone. Review the reader's loan history before deleting.
+    </Warning>
+
+  </Accordion>
+</AccordionGroup>

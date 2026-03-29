@@ -1,0 +1,74 @@
+---
+title: 'Book catalog'
+description: 'How to view and manage the library book catalog in SIS-BIBLIO.'
+keywords: ['books', 'catalog', 'libros', 'inventory', 'add book', 'edit book', 'delete book']
+---
+
+## Viewing the catalog
+
+All authenticated users can view the full book list at `modules/libros.php`. The table displays the following columns for each book:
+
+| Column | Description |
+|--------|-------------|
+| **ID** | Unique book identifier |
+| **Título del Libro** | Title of the book |
+| **Autor / Creador** | Author name |
+| **Precio de Reposición** | Replacement cost (decimal) |
+| **Estado** | Current availability status |
+
+---
+
+## Book status values
+
+Each book has a color-coded status badge indicating its current availability:
+
+| Status | Badge color | Meaning |
+|--------|-------------|---------|
+| **Disponible** | Green | Available for loan |
+| **Ocupada** | Red/Pink | Currently out on loan |
+| **Mantenimiento** | Orange | Under maintenance, not available for loan |
+
+---
+
+## Adding a book (admin only)
+
+<Steps>
+  <Step title="Open the new book form">
+    Click the blue **Nuevo Libro** button in the top-right of the catalog page. This opens `modules/libros_form.php`.
+  </Step>
+  <Step title="Enter the title">
+    Fill in the **Título de la Obra** field. This value must be unique across the entire catalog.
+  </Step>
+  <Step title="Enter the author">
+    Fill in the **Autor / Escritor** field.
+  </Step>
+  <Step title="Enter the replacement price">
+    Fill in the **Precio Estimado (Reposición)** field with a decimal value representing the cost to replace the book if lost or damaged.
+  </Step>
+  <Step title="Set the status">
+    Select a status from the **Estado Físico/Disponibilidad** dropdown. New books default to **Disponible**.
+  </Step>
+  <Step title="Save">
+    Click **Guardar Cambios** to add the book to the catalog. You are redirected back to `libros.php`.
+  </Step>
+</Steps>
+
+<Note>
+  The **Title** field must be unique. If you try to save a book with a title that already exists in the catalog, the database will reject the entry.
+</Note>
+
+---
+
+## Editing a book (admin only)
+
+Click the **pencil (edit) icon** on any row in the catalog table. The same form used for adding books loads with the existing values pre-filled. Modify the fields you need and click **Guardar Cambios** to save.
+
+---
+
+## Deleting a book (admin only)
+
+Click the **red trash icon** on any book row. A browser confirmation dialog appears asking you to confirm the deletion. Click **OK** to proceed.
+
+<Warning>
+  Deleting a book **permanently removes all associated loan records** from the database due to a `CASCADE` constraint on the `prestamos` table. This action cannot be undone. Make sure you no longer need the loan history for a book before deleting it.
+</Warning>

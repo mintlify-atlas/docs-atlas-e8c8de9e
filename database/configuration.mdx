@@ -1,0 +1,78 @@
+---
+title: 'Database configuration'
+description: 'How to connect SIS-BIBLIO to a MySQL database by editing config/database.php.'
+---
+
+SIS-BIBLIO connects to MySQL using PDO. All connection settings live in a single file: `config/database.php`. This page explains what each property controls and how to configure it for local and cloud environments.
+
+<Warning>
+  Never commit `config/database.php` with real credentials to version control. Add it to your `.gitignore` to prevent accidentally exposing your database password.
+</Warning>
+
+---
+
+## Connection settings
+
+Open `config/database.php` and update the five private properties at the top of the `DBConnection` class:
+
+```php config/database.php
+<?php
+class DBConnection
+{
+    private $host = 'your-host';
+    private $db   = 'crud_sis_biblio_publico';
+    private $user = 'your-username';
+    private $port = '3306';
+    private $pass = 'your-password';
+    // ...
+}
+```
+
+| Property | Description | Example |
+|----------|-------------|---------|
+| `$host` | Database server hostname or IP address | `localhost` or `mysql.aiven.io` |
+| `$db` | Database name | `crud_sis_biblio_publico` |
+| `$user` | Database username | `root` |
+| `$port` | Database port | `3306` (MySQL default) |
+| `$pass` | Database password | your password |
+
+---
+
+## Local setup (XAMPP / WAMP)
+
+For a local development environment, use these typical values:
+
+| Property | Value |
+|----------|-------|
+| `$host` | `localhost` |
+| `$port` | `3306` |
+| `$user` | `root` |
+| `$pass` | *(empty string for XAMPP default, or whatever you configured during installation)* |
+| `$db` | `crud_sis_biblio_publico` |
+
+<Tip>
+  After editing `config/database.php`, import `base_de_datos.sql` into MySQL Workbench or phpMyAdmin to create and seed the database before launching the application.
+</Tip>
+
+---
+
+## Cloud database (Aiven or similar)
+
+<Info>
+  The `ca.pem` certificate file is bundled in the repository root and is loaded automatically when the connection is established. SSL verification is enabled by default in `DBConnection::connect()` via the `PDO::MYSQL_ATTR_SSL_CA` option. You do not need to configure this manually — just ensure `ca.pem` remains in the project root alongside `config/`.
+
+  Use the host, port, username, and password provided by your cloud database provider (such as Aiven) and enter them into the corresponding properties in `config/database.php`.
+</Info>
+
+---
+
+## PDO connection options
+
+The connection is established with the following enforced options. These are applied automatically — no additional configuration is required.
+
+| Option | Behaviour |
+|--------|-----------|
+| Error mode | Errors throw `PDOException` exceptions, so failures are caught cleanly rather than silently ignored |
+| Fetch mode | Query results are returned as associative arrays |
+| Emulated prepares | Disabled — the driver uses real prepared statements, which prevents SQL injection |
+| SSL CA | The `ca.pem` file in the project root is used for SSL verification on cloud connections |

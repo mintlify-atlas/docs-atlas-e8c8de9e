@@ -1,0 +1,113 @@
+---
+title: "Installation"
+description: "Set up SIS-BIBLIO on a local or cloud PHP environment."
+keywords: ["SIS-BIBLIO", "installation", "setup", "XAMPP", "WAMP", "MySQL", "PHPMailer"]
+---
+
+<Steps>
+
+<Step title="Prerequisites">
+
+Before you begin, make sure you have the following:
+
+- A PHP-compatible web server — Apache via **XAMPP** or **WAMP** is recommended for local development
+- **PHP 8.0** or higher
+- **MySQL** or **MariaDB**
+- **PHPMailer** — bundled in the repository, no separate installation required
+
+</Step>
+
+<Step title="Copy project files">
+
+Copy the `CRUD-SIS-BIBLIO-Publico/` folder into your web server's document root:
+
+- **XAMPP / WAMP** → `htdocs/`
+- **WampServer** → `www/`
+
+The folder must be placed at the root of your document directory so the URL resolves correctly.
+
+</Step>
+
+<Step title="Import the database">
+
+<Tabs>
+  <Tab title="Local (phpMyAdmin)">
+    1. Open phpMyAdmin in your browser (usually `http://localhost/phpmyadmin`).
+    2. Create a new database named `crud_sis_biblio_publico`.
+    3. Select the new database, then go to the **Import** tab.
+    4. Choose `base_de_datos.sql` from the project folder and click **Go**.
+  </Tab>
+  <Tab title="MySQL CLI">
+    ```bash
+    mysql -u root -p
+    CREATE DATABASE crud_sis_biblio_publico;
+    USE crud_sis_biblio_publico;
+    SOURCE /path/to/base_de_datos.sql;
+    ```
+  </Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Configure database connection">
+
+Open `config/database.php` and fill in your connection details:
+
+```php
+<?php
+class DBConnection
+{
+    private $host = 'tu-host';        // e.g. localhost
+    private $db   = 'tu-base-de-datos'; // crud_sis_biblio_publico
+    private $user = 'tu-usuario';     // e.g. root
+    private $port = 'tu-puerto';      // e.g. 3306
+    private $pass = 'tu-contraseña';  // your database password
+
+    public function connect()
+    {
+        // ...
+    }
+}
+```
+
+For a standard local XAMPP setup, `host` is `localhost`, `port` is `3306`, and `user` is `root` with an empty password.
+
+<Info>
+  If you're connecting to a cloud database (Aiven, PlanetScale, etc.), keep the `PDO::MYSQL_ATTR_SSL_CA` option pointing to the bundled `ca.pem` certificate and set your provider's host, port, and credentials here.
+</Info>
+
+</Step>
+
+<Step title="Configure email (PHPMailer)">
+
+Password recovery emails are sent via Gmail SMTP. Open `recover.php` and locate the SMTP configuration block around **line 43**:
+
+1. Set `$mail->Username` to your Gmail address.
+2. Set `$mail->Password` to a **16-digit App Password** — do not use your personal Gmail password.
+
+To generate an App Password, go to your Google Account → **Security** → **2-Step Verification** → **App passwords**: [https://myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords)
+
+</Step>
+
+<Step title="Access the system">
+
+Start your web server and open the following URL in your browser:
+
+```
+http://localhost/CRUD-SIS-BIBLIO-Publico/index.php
+```
+
+</Step>
+
+</Steps>
+
+<Note>
+  The database ships with two pre-seeded test accounts:
+
+  - **Administrator:** `admin@ejemplo.com` / `1234567`
+  - **Reader:** `lector@ejemplo.com` / `1234567`
+</Note>
+
+<Warning>
+  Change the default test credentials before deploying to a production environment.
+</Warning>

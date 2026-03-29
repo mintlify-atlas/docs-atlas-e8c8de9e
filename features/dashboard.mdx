@@ -1,0 +1,66 @@
+---
+title: 'Dashboard'
+description: 'The statistics panel you land on after signing in to SIS-BIBLIO.'
+keywords: ['dashboard', 'statistics', 'overview', 'navigation', 'sidebar']
+---
+
+## Overview
+
+After signing in, you are taken to the dashboard at `modules/dashboard.php`. This is the home screen of the system.
+
+The **left sidebar** displays:
+- The **SIS-BIBLIO** header (book icon + system name)
+- Your **full name** and **role level** (ADMINISTRADOR or LECTOR REGULAR) beneath the header
+- Navigation links to all available modules
+
+---
+
+## Statistics for administrators
+
+When you are signed in as an **Administrator (Rol 1)**, the dashboard shows three stat cards:
+
+| Card | Source |
+|------|--------|
+| **Total Libros Catálogo** | COUNT of all rows in the `libros` table |
+| **Lectores Registrados** | COUNT of all rows in the `lectores` table |
+| **Préstamos Activos (Global)** | COUNT of rows in `prestamos` where status is not `Cancelada` |
+
+---
+
+## Statistics for readers
+
+When you are signed in as a **Reader (Rol 2)**, the dashboard shows two stat cards:
+
+| Card | Source |
+|------|--------|
+| **Total Libros Catálogo** | COUNT of all rows in the `libros` table |
+| **Mis Préstamos Históricos** | COUNT of loans linked to your own user account |
+
+<Note>
+  Readers do not see the global active loan count or the registered readers count. Those stat cards are hidden and replaced with your personal loan history.
+</Note>
+
+---
+
+## Navigation
+
+The left sidebar provides links to all modules you have access to:
+
+- **Inicio** — Returns to this home screen (`dashboard.php`)
+- **Catálogo** — Book catalog (`modules/libros.php`)
+- **Mis Préstamos** — Loan management (`modules/prestamos.php`)
+- **Lectores** — Reader directory (`modules/lectores.php`) — *Administrators only*
+- **Staff del Sistema** — User management (`modules/usuarios.php`) — *Administrators only*
+- **Salir** — Signs you out and redirects to `login.php`
+
+<Info>
+  Readers will not see the **Lectores** or **Staff del Sistema** links in their sidebar. Attempting to access those pages directly will result in an "Acceso Denegado" error.
+</Info>
+
+---
+
+## Mobile navigation
+
+On small screens (smartphones and tablets), the sidebar is hidden by default to save screen space.
+
+Tap the **hamburger menu (☰)** in the top-left corner to expand the sidebar and access the navigation links.

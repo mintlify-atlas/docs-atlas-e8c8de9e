@@ -1,0 +1,61 @@
+---
+title: "Introduction"
+description: "SIS-BIBLIO is a full-stack library management system built with pure PHP, MySQL (PDO), and vanilla JavaScript — no frameworks required."
+keywords: ["SIS-BIBLIO", "library management", "PHP", "MySQL", "PDO", "CRUD"]
+---
+
+SIS-BIBLIO (Sistema de Gestión Bibliotecaria) is a complete platform for managing a library's book catalog, loan records, and user accounts. It enforces professional-grade security at every layer and is built entirely with PHP 8+, HTML5, CSS3, vanilla JavaScript, and MySQL via PDO — no external frameworks.
+
+## User roles
+
+SIS-BIBLIO distinguishes between two roles:
+
+- **Administrator (Staff)** — full access to all modules: book catalog, loan management, reader profiles, and user account administration.
+- **Reader (Lector)** — limited access to their own loan history and account details.
+
+## Key capabilities
+
+<CardGroup cols={2}>
+  <Card title="Secure authentication" icon="lock" href="/features/authentication">
+    Login with CSRF protection, brute-force lockout, and BCrypt-hashed passwords.
+  </Card>
+  <Card title="Statistical dashboard" icon="chart-bar" href="/features/dashboard">
+    Role-aware stat cards showing total books, active loans, and registered readers.
+  </Card>
+  <Card title="Book catalog CRUD" icon="book" href="/features/book-catalog">
+    Add, edit, and delete titles. Track availability status per book.
+  </Card>
+  <Card title="Loan management" icon="handshake" href="/features/loans">
+    Register loans with unique codes, set return dates, and update statuses.
+  </Card>
+  <Card title="User management" icon="users" href="/features/user-management">
+    Create and manage Staff and Reader accounts with role-based permissions.
+  </Card>
+  <Card title="Security model" icon="shield" href="/security/overview">
+    Multi-layer protection: prepared statements, XSS sanitization, CSRF tokens, and session hardening.
+  </Card>
+</CardGroup>
+
+## Tech stack
+
+| Layer | Technology |
+|---|---|
+| Backend | PHP 8+ (no frameworks) |
+| Database | MySQL / MariaDB |
+| Database driver | PDO |
+| Frontend | HTML5, CSS3, vanilla JavaScript |
+| Email | PHPMailer |
+| Icons | FontAwesome |
+
+## Architecture overview
+
+```text
+SIS-BIBLIO/
+├── modules/       # Dashboard pages and CRUD forms
+├── config/        # Core logic: PDO connection, auth, CSRF
+├── assets/        # Public CSS and images
+│   └── dashboard/ # Per-page encapsulated CSS for the dashboard
+└── PHPMailer/     # Transactional email engine
+```
+
+Each module in `modules/` is a self-contained PHP page. Configuration and authentication logic live in `config/`, keeping concerns cleanly separated.

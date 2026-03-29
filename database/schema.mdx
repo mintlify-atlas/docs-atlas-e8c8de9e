@@ -1,0 +1,161 @@
+---
+title: 'Database schema'
+description: 'Overview of the SIS-BIBLIO data model — tables, columns, types, and entity relationships.'
+---
+
+The database is named `crud_sis_biblio_publico`. It consists of five tables that together support user authentication, reader management, the book catalogue, and loan tracking.
+
+---
+
+## roles
+
+Stores the available user roles in the system.
+
+| Column | Type | Notes |
+|--------|------|-------|
+| `id_rol` | `INT` | Auto-increment, primary key |
+| `nombre_rol` | `VARCHAR(50)` | NOT NULL |
+
+The table is pre-seeded with two roles:
+
+| `id_rol` | `nombre_rol` |
+|----------|--------------|
+| `1` | `Administrador` |
+| `2` | `Lector` |
+
+---
+
+## usuarios
+
+Stores system login accounts with full security metadata.
+
+| Column | Type | Notes |
+|--------|------|-------|
+| `id_usuario` | `INT` | Auto-increment, primary key |
+| `nombre_completo` | `VARCHAR(100)` | NOT NULL |
+| `correo` | `VARCHAR(100)` | NOT NULL, UNIQUE |
+| `password` | `VARCHAR(255)` | NOT NULL — stores a BCrypt hash, never plain text |
+| `id_rol` | `INT` | NOT NULL — FK → `roles(id_rol)` |
+| `intentos_fallidos` | `INT` | DEFAULT `0` — increments on each failed login attempt |
+| `bloqueado_hasta` | `DATETIME` | NULL — set when the account is temporarily locked |
+| `reset_token` | `VARCHAR(255)` | NULL — one-time password reset token |
+| `reset_expires` | `DATETIME` | NULL — expiry timestamp for the reset token |
+
+---
+
+## lectores
+
+Stores reader profiles that can optionally be linked to a login account.
+
+| Column | Type | Notes |
+|--------|------|-------|
+| `id_lector` | `INT` | Auto-increment, primary key |
+| `id_usuario` | `INT` | NULL — FK → `usuarios(id_usuario)` ON DELETE SET NULL |
+| `nombre_completo` | `VARCHAR(100)` | NOT NULL |
+| `telefono` | `VARCHAR(20)` | NOT NULL |
+| `estado` | `ENUM('Activo', 'Inactivo')` | DEFAULT `'Activo'` |
+
+<Note>
+  The `lectores` table is separate from `usuarios` to allow anonymous reader profiles that are not linked to a system login account. A reader can exist in the system without ever having login credentials.
+</Note>
+
+---
+
+## libros
+
+Stores the library's book catalogue.
+
+| Column | Type | Notes |
+|--------|------|-------|
+| `id_libro` | `INT` | Auto-increment, primary key |
+| `titulo` | `VARCHAR(150)` | NOT NULL, UNIQUE |
+| `autor` | `VARCHAR(100)` | NOT NULL |
+| `precio` | `DECIMAL(10,2)` | NOT NULL — replacement cost of the book |
+| `estado` | `ENUM('Disponible', 'Ocupada', 'Mantenimiento')` | DEFAULT `'Disponible'` |
+
+---
+
+## prestamos
+
+Records individual loan transactions, linking a reader to a book for a defined period.
+
+| Column | Type | Notes |
+|--------|------|-------|
+| `id_prestamo` | `INT` | Auto-increment, primary key |
+| `codigo` | `VARCHAR(20)` | NOT NULL, UNIQUE — user-assigned loan code (e.g. `PRE-0001`) |
+| `id_lector` | `INT` | NOT NULL — FK → `lectores(id_lector)` ON DELETE CASCADE |
+| `id_libro` | `INT` | NOT NULL — FK → `libros(id_libro)` ON DELETE CASCADE |
+| `fecha_prestamo` | `DATE` | NOT NULL — loan start date |
+| `fecha_devolucion` | `DATE` | NOT NULL — expected return date |
+| `estado` | `ENUM('Confirmada', 'Pendiente', 'Cancelada')` | DEFAULT `'Pendiente'` |
+
+---
+
+## Entity relationships
+
+- A `usuario` can be linked to one `lector` profile. This link is optional — a `lector` record can exist without any associated login account.
+- A `lector` can have many `prestamos`. All loans belonging to a reader are accessible through the `id_lector` foreign key.
+- A `libro` can have many `prestamos`. Multiple loan records can reference the same book over time.
+- **CASCADE rules:** deleting a `lector` record automatically deletes all of its associated `prestamos`. Likewise, deleting a `libro` removes all loan records that reference it.
+
+---
+
+## Full SQL schema
+
+<AccordionGroup>
+  <Accordion title="View CREATE TABLE statements">
+
+```sql
+CREATE DATABASE IF NOT EXISTS crud_sis_biblio_publico;
+USE crud_sis_biblio_publico;
+
+CREATE TABLE roles (
+    id_rol INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_rol VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE usuarios (
+    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_completo VARCHAR(100) NOT NULL,
+    correo VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    id_rol INT NOT NULL,
+    intentos_fallidos INT DEFAULT 0,
+    bloqueado_hasta DATETIME NULL,
+    reset_token VARCHAR(255) NULL,
+    reset_expires DATETIME NULL,
+    FOREIGN KEY (id_rol) REFERENCES roles(id_rol)
+);
+
+CREATE TABLE lectores (
+    id_lector INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT DEFAULT NULL,
+    nombre_completo VARCHAR(100) NOT NULL,
+    telefono VARCHAR(20) NOT NULL,
+    estado ENUM('Activo', 'Inactivo') DEFAULT 'Activo',
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE SET NULL
+);
+
+CREATE TABLE libros (
+    id_libro INT AUTO_INCREMENT PRIMARY KEY,
+    titulo VARCHAR(150) NOT NULL UNIQUE,
+    autor VARCHAR(100) NOT NULL,
+    precio DECIMAL(10,2) NOT NULL,
+    estado ENUM('Disponible', 'Ocupada', 'Mantenimiento') DEFAULT 'Disponible'
+);
+
+CREATE TABLE prestamos (
+    id_prestamo INT AUTO_INCREMENT PRIMARY KEY,
+    codigo VARCHAR(20) NOT NULL UNIQUE,
+    id_lector INT NOT NULL,
+    id_libro INT NOT NULL,
+    fecha_prestamo DATE NOT NULL,
+    fecha_devolucion DATE NOT NULL,
+    estado ENUM('Confirmada', 'Pendiente', 'Cancelada') DEFAULT 'Pendiente',
+    FOREIGN KEY (id_lector) REFERENCES lectores(id_lector) ON DELETE CASCADE,
+    FOREIGN KEY (id_libro) REFERENCES libros(id_libro) ON DELETE CASCADE
+);
+```
+
+  </Accordion>
+</AccordionGroup>

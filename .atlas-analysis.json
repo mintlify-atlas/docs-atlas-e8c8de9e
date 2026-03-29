@@ -1,0 +1,77 @@
+{
+  "projectType": "saas",
+  "projectName": "SIS-BIBLIO",
+  "projectDescription": "A full-stack library management system built with pure PHP that provides secure authentication, book catalog CRUD, loan tracking, and role-based access control for administrators and standard readers.",
+  "theme": "almond",
+  "primaryColor": "#2563eb",
+  "lightColor": null,
+  "darkColor": null,
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": ["introduction", "installation", "quickstart"]
+          },
+          {
+            "group": "Core Features",
+            "pages": [
+              "features/authentication",
+              "features/dashboard",
+              "features/book-catalog",
+              "features/loans",
+              "features/user-management"
+            ]
+          },
+          {
+            "group": "Security",
+            "pages": [
+              "security/overview",
+              "security/password-recovery"
+            ]
+          },
+          {
+            "group": "Database",
+            "pages": [
+              "database/schema",
+              "database/configuration"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Role-based access control (Administrator vs Reader)",
+    "Secure login with brute-force protection (15-minute lockout after 3 failures)",
+    "CSRF token protection on all forms and critical actions",
+    "BCrypt password hashing via PHP's PASSWORD_BCRYPT",
+    "SQL injection prevention with PDO prepared statements and XSS sanitization",
+    "Complete CRUD for book catalog with availability status tracking",
+    "Loan management with date tracking and status workflow (Pending, Confirmed, Cancelled)",
+    "Password recovery via PHPMailer with time-limited single-use tokens (1 hour TTL)",
+    "Responsive dark-mode UI for authentication screens with hamburger menu on mobile",
+    "Statistical dashboard with role-differentiated metrics"
+  ],
+  "publicApiSurface": [
+    "index.php — Public landing page",
+    "login.php — User authentication endpoint (POST)",
+    "register.php — New reader self-registration (POST)",
+    "recover.php — Password recovery request via email (POST)",
+    "reset.php — Token-authenticated password reset (POST)",
+    "logout.php — Session termination",
+    "modules/dashboard.php — Statistics panel (authenticated)",
+    "modules/libros.php — Book catalog listing (authenticated)",
+    "modules/libros_form.php — Book create/edit form (admin only)",
+    "modules/prestamos.php — Loan listing and management (authenticated)",
+    "modules/prestamos_form.php — Loan create/edit form (authenticated)",
+    "modules/lectores.php — Reader listing (admin only)",
+    "modules/lectores_form.php — Reader create/edit form (admin only)",
+    "modules/usuarios.php — Staff user management (admin only)",
+    "modules/usuarios_form.php — Staff user create/edit form (admin only)",
+    "config/database.php — DBConnection::connect()",
+    "config/auth.php — generate_csrf(), verify_csrf(), check_auth(), require_admin()"
+  ]
+}

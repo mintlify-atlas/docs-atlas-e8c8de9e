@@ -1,80 +1,131 @@
 ---
 title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+description: "Go from zero to managing your first book loan in under 5 minutes."
 ---
 
-## Get started in three steps
-
-Get your documentation site running locally and make your first customization.
-
-### Step 1: Set up your local environment
-
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 2: Deploy your changes
-
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
-
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
-
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 3: Go live
-
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
-
-## Next steps
-
-Now that you have your docs running, explore these key features:
-
-<CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
-</CardGroup>
+This guide walks you through signing in, adding a book, registering a reader, and recording your first loan — the core workflow of SIS-BIBLIO.
 
 <Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
+  Make sure you have completed [installation](/installation) and imported the database before following these steps.
 </Note>
+
+## Step 1: Sign in as administrator
+
+Navigate to your SIS-BIBLIO installation and open the login page:
+
+```
+http://localhost/CRUD-SIS-BIBLIO-Publico/login.php
+```
+
+Use the pre-seeded administrator account:
+
+| Field | Value |
+|-------|-------|
+| Email | `admin@ejemplo.com` |
+| Password | `1234567` |
+
+Click **Ingresar**. You are redirected to `modules/dashboard.php`.
+
+<Warning>
+  Change these default credentials before deploying to any non-local environment.
+</Warning>
+
+## Step 2: Review the dashboard
+
+The dashboard shows three stat cards for administrators:
+
+- **Total Libros Catálogo** — total books in the system
+- **Lectores Registrados** — total reader profiles
+- **Préstamos Activos (Global)** — active and pending loans
+
+The left sidebar provides access to all modules. On mobile, tap the **☰** hamburger button to expand the sidebar.
+
+## Step 3: Add a book
+
+<Steps>
+  <Step title="Open the catalog">
+    Click **Catálogo** in the left sidebar. The book list at `modules/libros.php` appears.
+  </Step>
+  <Step title="Create a new book">
+    Click the blue **Nuevo Libro** button in the top right. The form at `modules/libros_form.php` opens.
+  </Step>
+  <Step title="Fill in book details">
+    Enter the following fields:
+
+    | Field | Description |
+    |-------|-------------|
+    | Título | Book title (must be unique) |
+    | Autor | Author name |
+    | Precio | Replacement cost (decimal, e.g. `150.00`) |
+    | Estado | Availability status — choose **Disponible** |
+
+  </Step>
+  <Step title="Save the book">
+    Submit the form. The book appears in the catalog with a green **DISPONIBLE** badge.
+  </Step>
+</Steps>
+
+## Step 4: Register a reader
+
+<Steps>
+  <Step title="Open the readers list">
+    Click **Lectores** in the sidebar to open `modules/lectores.php`.
+  </Step>
+  <Step title="Add a new reader">
+    Click **Nuevo Lector** and fill in:
+
+    | Field | Description |
+    |-------|-------------|
+    | Nombre completo | Reader's full name |
+    | Teléfono | Contact phone number |
+    | Estado | Set to **Activo** |
+
+  </Step>
+  <Step title="Save the reader">
+    Submit the form. The reader appears in the list and is now available to assign loans.
+  </Step>
+</Steps>
+
+<Tip>
+  Readers who register themselves via the public `register.php` page are automatically added to the system with the Reader role and create their own reader profile — no manual action required.
+</Tip>
+
+## Step 5: Create a loan
+
+<Steps>
+  <Step title="Open loans">
+    Click **Mis Préstamos** in the sidebar to open `modules/prestamos.php`.
+  </Step>
+  <Step title="Register a new loan">
+    Click **Registrar Préstamo** and complete the form:
+
+    | Field | Description |
+    |-------|-------------|
+    | Código Generado | Auto-generated loan identifier (e.g. `LIB-4823`) — read-only, filled by the system |
+    | Lector | Select the reader you just created |
+    | Libro | Select the book you just added |
+    | Fecha préstamo | Loan start date (defaults to today) |
+    | Fecha devolución | Expected return date (defaults to 7 days from today) |
+
+  </Step>
+  <Step title="Confirm the loan">
+    Submit the form. The loan appears in the list. When the book physically leaves the library, update the status to **Confirmada**.
+  </Step>
+</Steps>
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="Book catalog" icon="book" href="/features/book-catalog">
+    Learn all book statuses and how to manage the full catalog.
+  </Card>
+  <Card title="Loan management" icon="handshake" href="/features/loans">
+    Understand loan statuses, cancellations, and the full loan lifecycle.
+  </Card>
+  <Card title="User management" icon="users" href="/features/user-management">
+    Create staff accounts and manage reader profiles.
+  </Card>
+  <Card title="Security overview" icon="shield" href="/security/overview">
+    Understand the security model protecting your system.
+  </Card>
+</CardGroup>
